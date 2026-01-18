@@ -1,6 +1,7 @@
+
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from './App.tsx';
 
 interface Props {
   children?: ReactNode;
@@ -11,7 +12,7 @@ interface State {
   error: Error | null;
 }
 
-// Fix: Explicitly declare state property and use Component class directly to resolve type errors.
+// Fixed: Explicitly passed Props and State to Component
 class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,

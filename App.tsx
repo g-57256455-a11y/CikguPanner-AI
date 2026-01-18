@@ -1,11 +1,12 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { AppView, WeeklyPlanItem, SavedRPH } from './types';
-import { analyzeRPT } from './services/geminiService';
-import { extractTextFromFile } from './utils/fileHelpers';
-import { Button } from './components/Button';
-import { WeekCard } from './components/WeekCard';
-import { DailyRPHModal } from './components/DailyRPHModal';
-import { CalendarView } from './components/CalendarView';
+import { AppView, WeeklyPlanItem, SavedRPH } from './types.ts';
+import { analyzeRPT } from './services/geminiService.ts';
+import { extractTextFromFile } from './utils/fileHelpers.ts';
+import { Button } from './components/Button.tsx';
+import { WeekCard } from './components/WeekCard.tsx';
+import { DailyRPHModal } from './components/DailyRPHModal.tsx';
+import { CalendarView } from './components/CalendarView.tsx';
 
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.INPUT_RPT);
@@ -14,17 +15,14 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessingFile, setIsProcessingFile] = useState(false);
   
-  // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<WeeklyPlanItem | null>(null);
   const [selectedSavedRPH, setSelectedSavedRPH] = useState<SavedRPH | null>(null);
   
-  // Saved RPH State
   const [savedRPHs, setSavedRPHs] = useState<SavedRPH[]>([]);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load Saved RPHs from LocalStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem('cikguplanner_saved_rphs');
     if (stored) {
@@ -36,7 +34,6 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Save RPHs to LocalStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('cikguplanner_saved_rphs', JSON.stringify(savedRPHs));
   }, [savedRPHs]);
@@ -84,7 +81,6 @@ const App: React.FC = () => {
       alert(error.message || "Gagal memproses fail.");
     } finally {
       setIsProcessingFile(false);
-      // Reset input
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -118,7 +114,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-slate-900 bg-slate-50">
-      {/* Navbar */}
       <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -131,7 +126,6 @@ const App: React.FC = () => {
               <span className="font-bold text-xl tracking-tight text-slate-800">CikguPlanner <span className="text-indigo-600">AI</span></span>
             </div>
             
-            {/* Navigation Tabs */}
             {view !== AppView.INPUT_RPT && (
               <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg">
                 <button 
@@ -169,7 +163,6 @@ const App: React.FC = () => {
       </nav>
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
         {view === AppView.INPUT_RPT && (
           <div className="max-w-3xl mx-auto animate-fade-in-up">
             <div className="text-center mb-10">
@@ -179,7 +172,6 @@ const App: React.FC = () => {
               </p>
             </div>
 
-            {/* Check if we have saved RPHs to show a shortcut */}
             {savedRPHs.length > 0 && (
               <div className="mb-8 text-center">
                  <Button onClick={() => setView(AppView.CALENDAR_VIEW)} variant="secondary" className="mx-auto">
@@ -189,8 +181,6 @@ const App: React.FC = () => {
             )}
 
             <div className="bg-white rounded-2xl shadow-xl p-1 border border-slate-100">
-              
-              {/* File Upload Zone */}
               <div 
                 className="p-8 m-4 border-2 border-dashed border-indigo-200 rounded-xl bg-indigo-50/50 hover:bg-indigo-50 transition-colors cursor-pointer text-center"
                 onDragOver={(e) => e.preventDefault()}
@@ -212,7 +202,6 @@ const App: React.FC = () => {
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     <p className="text-indigo-800 font-medium">Sedang membaca fail...</p>
-                    <p className="text-indigo-600 text-xs mt-1">Ini mungkin mengambil masa untuk fail besar.</p>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
@@ -234,9 +223,6 @@ const App: React.FC = () => {
               </div>
 
               <div className="p-6 pt-2">
-                 <label className="block text-sm font-semibold text-slate-700 mb-3 ml-1">
-                   Kandungan RPT (Teks)
-                 </label>
                  <textarea 
                    className="w-full h-64 p-4 rounded-xl bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none font-mono text-sm text-slate-700 shadow-inner"
                    placeholder="Teks RPT akan muncul di sini selepas muat naik fail..."
@@ -253,9 +239,6 @@ const App: React.FC = () => {
                 >
                   {isLoading ? 'Sedang Menganalisa...' : 'Analisa RPT & Jana Jadual'}
                 </Button>
-                <p className="text-center text-xs text-slate-400 mt-4">
-                  Dikuasakan oleh Gemini 2.5 Flash. Menyokong analisis konteks yang besar.
-                </p>
               </div>
             </div>
           </div>
@@ -295,7 +278,6 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Reuse Modal for both Generating and Viewing */}
       <DailyRPHModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -304,7 +286,6 @@ const App: React.FC = () => {
         rptContent={rptText}
         onSave={handleSaveRPH}
       />
-      
     </div>
   );
 };
